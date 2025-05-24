@@ -51,13 +51,23 @@ export default async function handler(req, res) {
     const model = await new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
       model: "gemini-2.5-flash-preview-04-17",
-      temperature: 0.7,
-      //maxOutputTokens: 1024,
+      temperature: 0.9,
+      topP: 0.8,
+      maxOutputTokens: 2048, // Enable longer responses for better variety
     }).withStructuredOutput(QuoteSchema);
     console.log("Model initialized successfully");
 
+    // Add timestamp and random seed for uniqueness
+    const timestamp = new Date().toISOString();
+    const randomSeed = Math.random().toString(36).substring(7);
+
     const prompt = `
       Return a JSON object with exactly these four fields: "quote", "author", "meaning", and "analogy". Each field should be a string that meets these requirements:
+
+      Current timestamp: ${timestamp}
+      Random seed: ${randomSeed}
+
+      Please provide a NEW, DIFFERENT quote than any previous ones.
 
       The "quote" field (15-300 chars):
       - A famous historical quote from a notable figure
