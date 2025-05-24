@@ -9,8 +9,13 @@ const QuoteSchema = z.object({
     .min(15, { message: "Quote must be at least 15 characters long." })
     .max(300, { message: "Quote must be 300 characters or less." })
     .describe(
-      "The inspirational quote itself. It should be concise, uplifting, and directly usable without any additional text or quotation marks around the string itself unless part of the quote."
+      "The historical quote itself, exactly as spoken/written by the notable figure."
     ),
+  author: z
+    .string()
+    .min(2, { message: "Author name must be at least 2 characters long." })
+    .max(100, { message: "Author name must be 100 characters or less." })
+    .describe("The full name of the historical figure who made the quote."),
   meaning: z
     .string()
     .min(50, { message: "Meaning must be at least 50 characters long." })
@@ -52,40 +57,46 @@ export default async function handler(req, res) {
     console.log("Model initialized successfully");
 
     const prompt = `
-      Return a JSON object with exactly these three fields: "quote", "meaning", and "analogy". Each field should be a string that meets these requirements:
+      Return a JSON object with exactly these four fields: "quote", "author", "meaning", and "analogy". Each field should be a string that meets these requirements:
 
       The "quote" field (15-300 chars):
-      - An original inspirational message
-      - Focus on personal growth or resilience
-      - Use clear, concise language
-      - Avoid clichés
-      - Have a memorable quality
+      - A famous historical quote from a notable figure
+      - Must be authentic and accurately attributed
+      - Should focus on wisdom, personal growth, or resilience
+      - Must be impactful and memorable
+      - Do not include quotation marks in the quote text itself
+
+      The "author" field (2-100 chars):
+      - The full name of the historical figure who made the quote
+      - Must be accurately attributed
+      - Should be a renowned historical figure, philosopher, leader, or thinker
 
       The "meaning" field (50-300 chars):
-      - Explain the core message
+      - Explain the core message and historical context
       - Connect to personal development
-      - Make it practical and actionable
+      - Make it practical and actionable for today's world
 
       The "analogy" field (50-300 chars):
       - Use a simple real-world example
-      - Make it relatable
+      - Make it relatable to modern life
       - Help remember the message
 
-      Return only valid JSON with these three fields.`.trim();
+      Return only valid JSON with these four fields.`.trim();
 
     const response = await model.invoke([new HumanMessage(prompt)]);
     console.log("Response received from model:", response);
     const mailOptions = {
       from: `"Daily Inspiration" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_TO,
-      subject: "🌟 Your Daily Dose of Wisdom!",
+      subject: "🌟 Your Daily Dose of Historical Wisdom!",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #2c3e50;">Good Morning!</h2>
-            <p>Here's your inspirational quote for the day:</p>
+            <p>Here's your historical quote for the day:</p>
             <blockquote style="border-left: 4px solid #3498db; padding-left: 1em; margin-left: 0; font-style: italic; color: #555;">
               ${response.quote.trim()}
             </blockquote>
+            <p style="text-align: right; color: #7f8c8d; font-style: italic;">— ${response.author.trim()}</p>
 
             <div style="background-color: #f9f9f9; padding: 1em; border-radius: 5px; margin: 1em 0;">
               <h3 style="color: #2c3e50; margin-top: 0;">💡 Meaning</h3>
@@ -112,6 +123,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       message: "Email sent successfully!",
       quote: response.quote.trim(),
+      author: response.author.trim(),
       meaning: response.meaning.trim(),
       analogy: response.analogy.trim(),
     });
