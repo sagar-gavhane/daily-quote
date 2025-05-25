@@ -48,6 +48,21 @@ export default async function handler(req, res) {
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
   try {
+    const quotes = await fetch("https://api.api-ninjas.com/v1/quotes", {
+      method: "GET",
+      headers: {
+        "X-Api-Key": process.env.API_NINJAS_KEY,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!quotes.ok) {
+      throw new Error(`Failed to fetch quotes: ${quotes.statusText}`);
+    }
+    const quotesData = await quotes.json();
+    const quote = quotesData.at(0);
+    console.log("quote fetched successfully:", quote);
+
     const model = await new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
       model: "gemini-2.5-flash-preview-05-20",
@@ -62,34 +77,28 @@ export default async function handler(req, res) {
     const randomSeed = Math.random().toString(36).substring(7);
 
     const prompt = `
-      Return a JSON object with exactly these four fields: "quote", "author", "meaning", and "analogy". Each field should be a string that meets these requirements:
+      Return a JSON object with "quote", "author", "meaning", and "analogy" fields. The quote and author are provided below - generate meaning and analogy for this specific quote:
 
-      Current timestamp: ${timestamp}
-      Random seed: ${randomSeed}
+      Quote to analyze: "${quote.quote}"
+      Author: "${quote.author}"
 
-      Please provide a NEW, DIFFERENT quote than any previous ones.
+      Requirements for your response:
 
-      The "quote" field (15-300 chars):
-      - A famous historical quote from a notable figure
-      - Must be authentic and accurately attributed
-      - Should focus on wisdom, personal growth, or resilience
-      - Must be impactful and memorable
-      - Do not include quotation marks in the quote text itself
+      The "quote" field:
+      - Use exactly this quote: "${quote.quote}"
 
-      The "author" field (2-100 chars):
-      - The full name of the historical figure who made the quote
-      - Must be accurately attributed
-      - Should be a renowned historical figure, philosopher, leader, or thinker
+      The "author" field:
+      - Use exactly this author: "${quote.author}"
 
       The "meaning" field (50-300 chars):
-      - Explain the core message and historical context
-      - Connect to personal development
+      - Explain this specific quote's core message and historical context
+      - Connect it to personal development
       - Make it practical and actionable for today's world
 
       The "analogy" field (50-300 chars):
-      - Use a simple real-world example
+      - Create a simple real-world example that illustrates this specific quote's message
       - Make it relatable to modern life
-      - Help remember the message
+      - Help readers remember and apply this quote's wisdom
 
       Return only valid JSON with these four fields.`.trim();
 
