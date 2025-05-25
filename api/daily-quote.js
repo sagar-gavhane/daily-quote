@@ -50,8 +50,8 @@ export default async function handler(req, res) {
   try {
     const model = await new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
-      model: "gemini-2.5-flash-preview-04-17",
-      temperature: 0.9,
+      model: "gemini-2.5-flash-preview-05-20",
+      temperature: 1,
       topP: 0.8,
       maxOutputTokens: 2048, // Enable longer responses for better variety
     }).withStructuredOutput(QuoteSchema);
