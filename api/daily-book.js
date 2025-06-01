@@ -65,7 +65,6 @@ export default async function handler(req, res) {
 
   try {
     const book = getRandomBook();
-    console.log("Random book selected:", book);
 
     const model = new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
@@ -113,7 +112,6 @@ export default async function handler(req, res) {
       Return valid JSON matching the schema requirements.`.trim();
 
     const response = await model.invoke([new HumanMessage(prompt)]);
-    console.log("Response received from model:", response);
 
     const mailOptions = {
       from: `"Daily Book Summary" <${process.env.EMAIL_USER}>`,
