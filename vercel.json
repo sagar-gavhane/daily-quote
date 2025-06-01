@@ -5,10 +5,17 @@
     {
       "path": "/api/daily-quote",
       "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/daily-book",
+      "schedule": "30 13 * * *"
     }
   ],
   "functions": {
     "api/daily-quote.js": {
+      "maxDuration": 60
+    },
+    "api/daily-book.js": {
       "maxDuration": 60
     }
   }
