@@ -7,6 +7,8 @@ import {
   handleApiError,
   handleMethodNotAllowed,
 } from "../utils/response-handler.js";
+import { generateQuotePrompt } from "../prompts/ai-prompts.js";
+import { fetchRandomQuote } from "../utils/quote-service.js";
 
 export default async function sendDailyQuoteEmail(req, res) {
   if (req.method !== "POST" && req.method !== "GET") {
@@ -16,20 +18,7 @@ export default async function sendDailyQuoteEmail(req, res) {
   }
 
   try {
-    const quotes = await fetch("https://api.api-ninjas.com/v1/quotes", {
-      method: "GET",
-      headers: {
-        "X-Api-Key": process.env.API_NINJAS_KEY,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!quotes.ok) {
-      throw new Error(`Failed to fetch quotes: ${quotes.statusText}`);
-    }
-    const quotesData = await quotes.json();
-    const quote = quotesData.at(0);
-    console.log("quote fetched successfully:", quote);
+    const quote = await fetchRandomQuote();
 
     const model = await createAIModel(QuoteSchema, {
       temperature: 1,
@@ -37,32 +26,7 @@ export default async function sendDailyQuoteEmail(req, res) {
     });
     console.log("Model initialized successfully");
 
-    const prompt = `
-      Return a JSON object with "quote", "author", "meaning", and "analogy" fields. The quote and author are provided below - generate meaning and analogy for this specific quote:
-
-      Quote to analyze: "${quote.quote}"
-      Author: "${quote.author}"
-
-      Requirements for your response:
-
-      The "quote" field:
-      - Use exactly this quote: "${quote.quote}"
-
-      The "author" field:
-      - Use exactly this author: "${quote.author}"
-
-      The "meaning" field (50-300 chars):
-      - Explain this specific quote's core message and historical context
-      - Connect it to personal development
-      - Make it practical and actionable for today's world
-
-      The "analogy" field (50-300 chars):
-      - Create a simple real-world example that illustrates this specific quote's message
-      - Make it relatable to modern life
-      - Help readers remember and apply this quote's wisdom
-
-      Return only valid JSON with these four fields.`.trim();
-
+    const prompt = generateQuotePrompt(quote);
     const response = await model.invoke([new HumanMessage(prompt)]);
     console.log("Response received from model:", response);
 
