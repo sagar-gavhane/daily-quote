@@ -1,0 +1,16 @@
+name: Daily Book & Quote Email
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # 9 AM IST (3:00 UTC)
+
+jobs:
+  send-daily-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Daily Book Email
+        run: |
+          echo "Book API response:" && curl -v -X GET https://daily-quote-email.vercel.app/api/daily-book
+      - name: Trigger Daily Quote Email
+        run: |
+          echo "Quote API response:" && curl -v -X GET https://daily-quote-email.vercel.app/api/daily-quote
