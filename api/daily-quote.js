@@ -10,6 +10,11 @@ import {
 import { generateQuotePrompt } from "../prompts/ai-prompts.js";
 import { fetchRandomQuote } from "../utils/quote-service.js";
 
+const fromEmail = process.env.EMAIL_SENDER;
+const toEmails = process.env.EMAIL_RECEIVER.split(",")
+  .map((e) => e.trim())
+  .join(",");
+
 export default async function sendDailyQuoteEmail(req, res) {
   if (req.method !== "POST" && req.method !== "GET") {
     const { status, headers, body } = handleMethodNotAllowed(req.method);
@@ -31,8 +36,8 @@ export default async function sendDailyQuoteEmail(req, res) {
     console.log("Response received from model:", response);
 
     await sendEmail({
-      from: `"Daily Inspiration" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_TO,
+      from: `"Daily Inspiration" <${fromEmail}>`,
+      to: toEmails,
       subject: "🌟 Your Daily Dose of Historical Wisdom!",
       html: generateQuoteEmailTemplate(response),
     });
