@@ -3,6 +3,7 @@ name: Daily Book & Quote Email
 on:
   schedule:
     - cron: "0 3 * * *" # 9 AM IST (3:00 UTC)
+  workflow_dispatch:
 
 jobs:
   send-daily-emails:
