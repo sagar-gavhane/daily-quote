@@ -1,12 +1,6 @@
 {
   "version": 2,
   "regions": ["bom1"],
-  "crons": [
-    {
-      "path": "/api/daily-quote",
-      "schedule": "30 3 * * *"
-    }
-  ],
   "functions": {
     "api/daily-quote.js": {
       "maxDuration": 60
