@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Trigger Daily Book Email
         run: |
-          echo "Book API response:" && curl -v -X GET https://daily-quote-email.vercel.app/api/daily-book
+          echo "Book API response:" && curl -X GET https://daily-quote-email.vercel.app/api/daily-book
       - name: Trigger Daily Quote Email
         run: |
-          echo "Quote API response:" && curl -v -X GET https://daily-quote-email.vercel.app/api/daily-quote
+          echo "Quote API response:" && curl -X GET https://daily-quote-email.vercel.app/api/daily-quote
