@@ -1,0 +1,14 @@
+name: Daily Cron
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # 9 AM IST (3:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  send-daily-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Daily Vocab Email
+        run: |
+          echo "Vocab API response:" && curl https://daily-quote-email.vercel.app/api/daily-vocab

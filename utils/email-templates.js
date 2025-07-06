@@ -146,8 +146,9 @@ export const generateWordEmailTemplate = (words) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
         @media (max-width: 600px) {
-          .word-section { padding: 1em 0.5em !important; }
+          .word-section { padding: 1.5em 1em !important; margin-bottom: 2.5em !important; }
           .synonyms-list, .verb-table { flex-direction: column !important; }
+          .synonym-badge { margin-bottom: 0.25em !important; }
           .word-title { font-size: 2em !important; }
         }
         @media (prefers-color-scheme: dark) {
@@ -176,9 +177,11 @@ export const generateWordEmailTemplate = (words) => {
               verbForms,
             }) => `
         <section class="word-section" style="margin-bottom:2.5em; border-radius:14px; background:#f6f8fa; padding:2em 1.5em; box-shadow:0 1px 4px rgba(0,0,0,0.03); border:1px solid #e5e7eb;">
-          <div style="text-align:center; margin-bottom:1.2em;">
-            <span class="word-title" style="display:inline-block; background:linear-gradient(90deg,#667eea,#764ba2); color:#fff; padding:0.6em 1.5em; border-radius:2em; font-size:2.5em; font-weight:800; letter-spacing:0.02em;">${word.trim()}</span>
-            <div style="margin-top:0.5em; color:#2980b9; font-size:1.2em; font-weight:600; letter-spacing:0.01em;">${partOfSpeech ? partOfSpeech.trim() : ""}</div>
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.2em; gap:1em; flex-wrap:wrap;">
+            <span class="word-title" style="font-size:2.2em; font-weight:800; color:#2c3e50; letter-spacing:0.01em;">${word.trim()}</span>
+            <span style="font-size:1.1em; color:#6366f1; font-weight:600; background:#f1f5f9; border-radius:0.7em; padding:0.2em 0.9em;">${
+              partOfSpeech ? partOfSpeech.trim() : ""
+            }</span>
           </div>
           <div style="margin-bottom:1.2em;">
             <h3 style="color:#2c3e50; font-size:1.3em; margin:0 0 0.4em; font-weight:700; letter-spacing:0.01em;">Definition</h3>
@@ -186,19 +189,36 @@ export const generateWordEmailTemplate = (words) => {
           </div>
           <div style="margin-bottom:1.2em;">
             <h3 style="color:#2c3e50; font-size:1.15em; margin:0 0 0.3em; font-weight:600;">Synonyms</h3>
-            <div class="synonyms-list" style="display:flex; flex-wrap:wrap; gap:0.5em;">
-              ${(!synonyms || synonyms.length === 0)
-                ? `<span style=\"color:#b91c1c; font-size:1em;\">No synonyms available.</span>`
-                : synonyms.map(s => `<span class=\"synonym-badge\" title=\"${s.trim()}\" style=\"background:#e0e7ff; color:#3730a3; padding:0.3em 0.9em; border-radius:1em; font-size:1em; display:inline-block;\">${s.trim()}</span>`).join('')}
+            <div class="synonyms-list" style="display:flex; flex-wrap:wrap; gap:1em 1.2em; margin-bottom:0.7em; margin-top:0.2em;">
+              ${
+                !synonyms || synonyms.length === 0
+                  ? `<span style=\"color:#b91c1c; font-size:1em;\">No synonyms available.</span>`
+                  : synonyms
+                      .map(
+                        (s) =>
+                          `<span class=\"synonym-badge\" title=\"${s.trim()}\" style=\"background:#e0e7ff; color:#3730a3; padding:0.3em 0.9em; border-radius:1em; font-size:1em; display:inline-block; margin-bottom:0.3em; margin-right:0.7em;\">${s.trim()}</span>`
+                      )
+                      .join("")
+              }
             </div>
           </div>
           <div style="margin-bottom:1.2em;">
             <h3 style="color:#2c3e50; font-size:1.15em; margin:0 0 0.3em; font-weight:600;">📝 Example Sentences</h3>
             <ol style="padding-left:1.5em; color:#222; margin:0;">
-              ${(examples || []).map((e, idx) => `<li style=\"margin-bottom:0.5em;\">${e.replace(new RegExp(word, 'gi'), '<b>'+word+'</b>')}</li>`).join('')}
+              ${(examples || [])
+                .map(
+                  (e, idx) =>
+                    `<li style=\"margin-bottom:0.5em;\">${e.replace(
+                      new RegExp(word, "gi"),
+                      "<b>" + word + "</b>"
+                    )}</li>`
+                )
+                .join("")}
             </ol>
           </div>
-          ${verbForms ? `
+          ${
+            verbForms
+              ? `
           <div style=\"margin-bottom:1.2em;\">
             <h3 style=\"color:#2c3e50; font-size:1.15em; margin:0 0 0.3em; font-weight:600;\">Verb Forms</h3>
             <table class=\"verb-table\" style=\"width:100%; border-collapse:collapse; background:#f9fafb; border-radius:8px; overflow:hidden; margin-top:0.5em;\" aria-label=\"Verb forms for ${word}\">
@@ -219,11 +239,13 @@ export const generateWordEmailTemplate = (words) => {
               </tbody>
             </table>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
         </section>
         `
           )
-          .join('')}
+          .join("")}
         <footer style="margin-top:2em; text-align:center; color:#7f8c8d; font-size:0.98em;">
           <hr style="border:0; border-top:1px solid #eee; margin:1.5em 0;" />
           <p style="margin:0 0 0.5em;">Keep learning and growing every day! 🌱</p>
