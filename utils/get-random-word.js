@@ -1,4 +1,4 @@
-import { words } from "./../facts/words.js";
+import { words } from "./../data/words.js";
 
 export function getRandomWord() {
   const randomIndex = Math.floor(Math.random() * words.length);
