@@ -42,3 +42,35 @@ export const BookSummarySchema = z.object({
     .max(500, { message: "Modern application must be 500 characters or less." })
     .describe("How the book's teachings can be applied in modern life"),
 });
+
+export const WordSchema = z.object({
+  word: z.string().describe("The vocabulary word"),
+  definition: z
+    .string()
+    .min(10, { message: "Definition must be at least 10 characters long." })
+    .max(200, { message: "Definition must be 200 characters or less." })
+    .describe("Definition of the vocabulary word"),
+  examples: z
+    .array(z.string())
+    .min(3)
+    .max(5)
+    .describe("Example sentences using the word"),
+  partOfSpeech: z
+    .string()
+    .describe("Part of speech (noun, verb, adjective, etc.)"),
+  synonyms: z
+    .array(z.string())
+    .min(1)
+    .max(5)
+    .describe("Synonyms for the vocabulary word"),
+  verbForms: z
+    .object({
+      base: z.string().describe("Base form of the verb"),
+      pastTense: z.string().describe("Past tense form of the verb"),
+      pastParticiple: z.string().describe("Past participle form of the verb"),
+    })
+    .optional()
+    .describe("Verb forms if the word is a verb"),
+});
+
+export const WordsSchema = z.array(WordSchema);

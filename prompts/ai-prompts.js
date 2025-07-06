@@ -64,3 +64,18 @@ export const generateBookPrompt = (book) => {
     Format content professionally and maintain technical accuracy.
     Return valid JSON matching the schema requirements.`.trim();
 };
+
+export const generateWordPrompt = (words) => {
+  return `
+      Act as a vocabulary expert and generate detailed definitions for the following words:
+
+      Words: ${words.join(", ")}
+
+      For each word, provide:
+      - The word itself
+      - A clear, concise definition (10-200 chars)
+      - Example sentences (1-3) demonstrating usage in context
+
+      Ensure definitions are accurate, easy to understand, and suitable for learners.
+      Return valid JSON with an array of objects, each containing "word", "definition", and "examples" fields.`.trim();
+};
