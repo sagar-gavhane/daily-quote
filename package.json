@@ -14,7 +14,7 @@
     "@langchain/core": "^0.3.57",
     "@langchain/google-genai": "^0.2.9",
     "langchain": "^0.3.27",
-    "nodemailer": "^7.0.3",
+    "nodemailer": "^7.0.7",
     "zod": "^3.25.23"
   }
 }
