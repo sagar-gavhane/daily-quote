@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@langchain/core": "^0.3.57",
+    "@langchain/core": "^0.3.80",
     "@langchain/google-genai": "^0.2.9",
     "langchain": "^0.3.27",
     "nodemailer": "^7.0.3",
